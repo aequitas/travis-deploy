@@ -1,0 +1,12 @@
+install: gem install puppet-lint
+
+script: puppet-lint --no-80chars-check modules manifests
+
+before_install:
+- openssl aes-256-cbc -K $encrypted_c33f995d0577_key -iv $encrypted_c33f995d0577_iv
+  -in deploy_key.enc -out .travis/deploy_key -d
+
+after_success:
+  - chmod 600 .travis/deploy_key
+  - ssh awesomnia.awesomeretro.org -i .travis/deploy_key -o StrictHostKeyChecking=no -l deploy sh -c 'test -d provision || git clone https://github.com/aequitas/travis-deploy.git provision; git pull -C provision; puppet apply --verbose --modulepath=provision/modules:provision/vendor/modules --hiera_config=provision/hiera.yaml provision/manifests/site.pp'
+  
