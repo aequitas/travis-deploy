@@ -8,5 +8,5 @@ before_install:
 
 after_success:
   - chmod 600 .travis/deploy_key
-  - ssh awesomnia.awesomeretro.org -i .travis/deploy_key -o StrictHostKeyChecking=no -l deploy sh -c 'test -d provision || git clone https://github.com/aequitas/travis-deploy.git provision; git pull -C provision; puppet apply --verbose --modulepath=provision/modules:provision/vendor/modules --hiera_config=provision/hiera.yaml provision/manifests/site.pp'
+  - ssh awesomnia.awesomeretro.org -i .travis/deploy_key -o StrictHostKeyChecking=no -l deploy sh -c 'test -d provision || git clone https://github.com/aequitas/travis-deploy.git provision; cd provision; puppet apply --modulepath=modules:vendor/modules --verbose --hiera_config=hiera.yaml manifests/site.pp; cd ..; rm -r provision'
   
